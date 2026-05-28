@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gene Intersection Analyzer - 基因交集分析工具</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>Gene Intersection Analyzer</h1>
+            <p class="subtitle">基因交集分析工具 - 支持2-4个基因集合的交集分析与韦恩图可视化</p>
+        </header>
+
+        <!-- 输入区域 -->
+        <section class="input-section">
+            <h2>输入基因列表</h2>
+            <div class="sets-container">
+                <!-- 集合1 -->
+                <div class="set-input" id="set1">
+                    <div class="set-header">
+                        <input type="text" class="set-name" value="Set A" placeholder="集合名称">
+                        <div class="set-color-picker">
+                            <label>颜色:</label>
+                            <input type="color" class="set-color" value="#FF6B6B">
+                        </div>
+                    </div>
+                    <textarea class="gene-list" placeholder="每行一个基因，或用逗号分隔&#10;例如:&#10;GENE1&#10;GENE2&#10;GENE3"></textarea>
+                    <div class="file-upload">
+                        <label class="upload-btn">
+                            <input type="file" accept=".txt,.csv,.tsv" onchange="app.handleFileUpload(this, 0)">
+                            📁 上传文件
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 集合2 -->
+                <div class="set-input" id="set2">
+                    <div class="set-header">
+                        <input type="text" class="set-name" value="Set B" placeholder="集合名称">
+                        <div class="set-color-picker">
+                            <label>颜色:</label>
+                            <input type="color" class="set-color" value="#4ECDC4">
+                        </div>
+                    </div>
+                    <textarea class="gene-list" placeholder="每行一个基因，或用逗号分隔&#10;例如:&#10;GENE1&#10;GENE2&#10;GENE3"></textarea>
+                    <div class="file-upload">
+                        <label class="upload-btn">
+                            <input type="file" accept=".txt,.csv,.tsv" onchange="app.handleFileUpload(this, 1)">
+                            📁 上传文件
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 集合3 (可折叠) -->
+                <div class="set-input collapsible" id="set3">
+                    <div class="set-header">
+                        <input type="text" class="set-name" value="Set C" placeholder="集合名称">
+                        <div class="set-color-picker">
+                            <label>颜色:</label>
+                            <input type="color" class="set-color" value="#45B7D1">
+                        </div>
+                        <button class="toggle-btn" onclick="app.toggleSet(2)">✕</button>
+                    </div>
+                    <textarea class="gene-list" placeholder="每行一个基因，或用逗号分隔"></textarea>
+                    <div class="file-upload">
+                        <label class="upload-btn">
+                            <input type="file" accept=".txt,.csv,.tsv" onchange="app.handleFileUpload(this, 2)">
+                            📁 上传文件
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 集合4 (可折叠) -->
+                <div class="set-input collapsible" id="set4">
+                    <div class="set-header">
+                        <input type="text" class="set-name" value="Set D" placeholder="集合名称">
+                        <div class="set-color-picker">
+                            <label>颜色:</label>
+                            <input type="color" class="set-color" value="#96CEB4">
+                        </div>
+                        <button class="toggle-btn" onclick="app.toggleSet(3)">✕</button>
+                    </div>
+                    <textarea class="gene-list" placeholder="每行一个基因，或用逗号分隔"></textarea>
+                    <div class="file-upload">
+                        <label class="upload-btn">
+                            <input type="file" accept=".txt,.csv,.tsv" onchange="app.handleFileUpload(this, 3)">
+                            📁 上传文件
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="add-set-container">
+                <button class="add-set-btn" id="addSetBtn" onclick="app.addSet()">+ 添加集合</button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="analyze-btn" onclick="app.analyze()">🔍 开始分析</button>
+                <button class="clear-btn" onclick="app.clearAll()">🗑️ 清空所有</button>
+            </div>
+        </section>
+
+        <!-- 设置面板 -->
+        <section class="settings-section">
+            <h2>图表设置</h2>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label>字体大小:</label>
+                    <input type="range" id="fontSize" min="10" max="24" value="14">
+                    <span id="fontSizeValue">14px</span>
+                </div>
+                <div class="setting-item">
+                    <label>图表宽度:</label>
+                    <input type="range" id="chartWidth" min="400" max="1000" value="600">
+                    <span id="chartWidthValue">600px</span>
+                </div>
+                <div class="setting-item">
+                    <label>图表高度:</label>
+                    <input type="range" id="chartHeight" min="400" max="1000" value="500">
+                    <span id="chartHeightValue">500px</span>
+                </div>
+                <div class="setting-item">
+                    <label>显示标签:</label>
+                    <input type="checkbox" id="showLabels" checked>
+                </div>
+                <div class="setting-item">
+                    <label>显示数量:</label>
+                    <input type="checkbox" id="showCounts" checked>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结果区域 -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <h2>分析结果</h2>
+
+            <!-- 韦恩图 -->
+            <div class="venn-container">
+                <div id="vennDiagram"></div>
+                <div class="export-buttons">
+                    <button onclick="exporter.downloadSVG()">📥 下载 SVG</button>
+                    <button onclick="exporter.downloadPNG()">📥 下载 PNG</button>
+                </div>
+            </div>
+
+            <!-- 交集结果表格 -->
+            <div class="intersection-table-container">
+                <h3>交集详情</h3>
+                <div class="table-actions">
+                    <button onclick="exporter.downloadCSV()">📥 下载 CSV</button>
+                    <button onclick="exporter.copyAllIntersections()">📋 复制所有交集</button>
+                </div>
+                <table id="intersectionTable">
+                    <thead>
+                        <tr>
+                            <th>交集区域</th>
+                            <th>基因数量</th>
+                            <th>基因列表</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="intersectionBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>Gene Intersection Analyzer v1.0 | 支持部署到 GitHub Pages</p>
+        </footer>
+    </div>
+
+    <!-- 依赖库 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/venn.min.js"></script>
+
+    <!-- 应用模块 -->
+    <script src="js/analyzer.js"></script>
+    <script src="js/venn.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

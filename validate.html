@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>验证页面 - 基因交集分析工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a6fd6;
+        }
+        #output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>基因交集分析工具 - 验证页面</h1>
+
+    <div class="test-section">
+        <h2>模块加载验证</h2>
+        <p>检查所有必需的模块是否正确加载：</p>
+        <button onclick="runValidation()">运行验证</button>
+        <div id="output"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>功能测试</h2>
+        <p>点击下面的按钮测试交集分析功能：</p>
+        <button onclick="testAnalysis()">测试分析功能</button>
+        <div id="analysisOutput"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>快速访问</h2>
+        <button onclick="window.location.href='index.html'">打开主程序</button>
+        <button onclick="window.location.href='test.html'">查看测试数据</button>
+    </div>
+
+    <!-- 依赖库 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/venn.min.js"></script>
+
+    <!-- 应用模块 -->
+    <script src="js/analyzer.js"></script>
+    <script src="js/venn.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        function runValidation() {
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+
+            const log = (message, type = 'info') => {
+                const line = document.createElement('div');
+                line.className = type;
+                line.textContent = message;
+                output.appendChild(line);
+            };
+
+            log('开始验证基因交集分析工具...');
+            log('');
+
+            // 检查模块是否加载
+            const modules = ['GeneAnalyzer', 'VennRenderer', 'exporter', 'app'];
+            let allLoaded = true;
+
+            modules.forEach(module => {
+                if (typeof window[module] === 'undefined') {
+                    log(`❌ 模块 ${module} 未加载`, 'error');
+                    allLoaded = false;
+                } else {
+                    log(`✅ 模块 ${module} 已加载`, 'success');
+                }
+            });
+
+            log('');
+
+            if (allLoaded) {
+                log('✅ 所有模块加载成功', 'success');
+            } else {
+                log('❌ 部分模块加载失败，请检查文件是否完整', 'error');
+            }
+        }
+
+        function testAnalysis() {
+            const output = document.getElementById('analysisOutput');
+            output.innerHTML = '';
+
+            const log = (message, type = 'info') => {
+                const line = document.createElement('div');
+                line.className = type;
+                line.textContent = message;
+                output.appendChild(line);
+            };
+
+            log('测试交集分析功能...');
+            log('');
+
+            try {
+                const testSets = [
+                    { name: 'Set A', genes: ['GENE1', 'GENE2', 'GENE3', 'GENE4', 'GENE5'] },
+                    { name: 'Set B', genes: ['GENE3', 'GENE4', 'GENE5', 'GENE6', 'GENE7'] }
+                ];
+
+                log('输入数据:');
+                log(`  Set A: ${testSets[0].genes.join(', ')}`);
+                log(`  Set B: ${testSets[1].genes.join(', ')}`);
+                log('');
+
+                // 测试交集计算
+                const intersections = GeneAnalyzer.calculateAllIntersections(testSets);
+                log(`✅ 计算了 ${intersections.length} 个交集`, 'success');
+
+                intersections.forEach(intersection => {
+                    log(`  ${intersection.label}: ${intersection.genes.join(', ')}`);
+                });
+
+                log('');
+
+                // 测试韦恩图数据生成
+                const vennData = GeneAnalyzer.generateVennData(testSets);
+                log(`✅ 生成了 ${vennData.length} 个韦恩图数据`, 'success');
+
+                log('');
+
+                // 测试统计摘要
+                const summary = GeneAnalyzer.generateSummary(testSets, intersections);
+                log(`✅ 统计摘要:`, 'success');
+                log(`  总集合数: ${summary.totalSets}`);
+                log(`  唯一基因数: ${summary.totalUniqueGenes}`);
+                log(`  交集数量: ${summary.totalIntersections}`);
+
+                log('');
+                log('✅ 所有测试通过！', 'success');
+
+            } catch (error) {
+                log(`❌ 测试失败: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

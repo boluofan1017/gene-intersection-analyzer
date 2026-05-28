@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>测试页面 - 基因交集分析工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .test-data {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a6fd6;
+        }
+    </style>
+</head>
+<body>
+    <h1>基因交集分析工具 - 测试页面</h1>
+
+    <div class="test-section">
+        <h2>快速测试</h2>
+        <p>点击下面的按钮自动填充测试数据：</p>
+        <button onclick="fillTestData()">填充测试数据</button>
+        <button onclick="window.location.href='index.html'">打开主程序</button>
+    </div>
+
+    <div class="test-section">
+        <h2>测试数据示例</h2>
+
+        <h3>示例1: 两个集合</h3>
+        <div class="test-data">
+            <strong>Set A:</strong> BRCA1, BRCA2, TP53, EGFR, MYC, KRAS, PIK3CA, PTEN, RB1, APC<br>
+            <strong>Set B:</strong> TP53, EGFR, MYC, KRAS, BRAF, CDK4, CDK6, MDM2, AKT1, MTOR
+        </div>
+
+        <h3>示例2: 三个集合</h3>
+        <div class="test-data">
+            <strong>Set A:</strong> BRCA1, BRCA2, TP53, EGFR, MYC, KRAS, PIK3CA, PTEN, RB1, APC<br>
+            <strong>Set B:</strong> TP53, EGFR, MYC, KRAS, BRAF, CDK4, CDK6, MDM2, AKT1, MTOR<br>
+            <strong>Set C:</strong> KRAS, BRAF, CDK4, CDK6, MDM2, AKT1, MTOR, PIK3CA, PTEN, TSC1
+        </div>
+
+        <h3>示例3: 四个集合</h3>
+        <div class="test-data">
+            <strong>Set A:</strong> BRCA1, BRCA2, TP53, EGFR, MYC, KRAS, PIK3CA, PTEN, RB1, APC<br>
+            <strong>Set B:</strong> TP53, EGFR, MYC, KRAS, BRAF, CDK4, CDK6, MDM2, AKT1, MTOR<br>
+            <strong>Set C:</strong> KRAS, BRAF, CDK4, CDK6, MDM2, AKT1, MTOR, PIK3CA, PTEN, TSC1<br>
+            <strong>Set D:</strong> TP53, RB1, APC, CDK4, CDK6, MDM2, AKT1, MTOR, TSC1, TSC2
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>功能测试清单</h2>
+        <ul>
+            <li>✅ 输入2-4个基因列表</li>
+            <li>✅ 文件上传功能</li>
+            <li>✅ 交集计算</li>
+            <li>✅ 韦恩图显示</li>
+            <li>✅ 颜色自定义</li>
+            <li>✅ 字体大小调整</li>
+            <li>✅ 图表尺寸调整</li>
+            <li>✅ 结果表格显示</li>
+            <li>✅ 下载SVG</li>
+            <li>✅ 下载PNG</li>
+            <li>✅ 下载CSV</li>
+            <li>✅ 复制基因列表</li>
+        </ul>
+    </div>
+
+    <script>
+        function fillTestData() {
+            // 存储测试数据到localStorage
+            const testData = {
+                sets: [
+                    {
+                        name: 'Breast Cancer',
+                        color: '#FF6B6B',
+                        genes: 'BRCA1\nBRCA2\nTP53\nEGFR\nMYC\nKRAS\nPIK3CA\nPTEN\nRB1\nAPC'
+                    },
+                    {
+                        name: 'Lung Cancer',
+                        color: '#4ECDC4',
+                        genes: 'TP53\nEGFR\nMYC\nKRAS\nBRAF\nCDK4\nCDK6\nMDM2\nAKT1\nMTOR'
+                    },
+                    {
+                        name: 'Colorectal Cancer',
+                        color: '#45B7D1',
+                        genes: 'KRAS\nBRAF\nCDK4\nCDK6\nMDM2\nAKT1\nMTOR\nPIK3CA\nPTEN\nTSC1'
+                    }
+                ]
+            };
+
+            localStorage.setItem('geneTestData', JSON.stringify(testData));
+            alert('测试数据已保存！现在打开主程序。');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
