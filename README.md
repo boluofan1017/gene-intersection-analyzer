@@ -1,10 +1,10 @@
-# Gene Intersection Analyzer
+# Gene Intersection & Union Analyzer
 
-基因交集分析工具 - 支持2-4个基因集合的交集分析与韦恩图可视化
+基因交集与并集分析工具 - 支持2-4个基因集合的交集/并集分析与韦恩图可视化
 
 ## 功能特性
 
-- **多集合支持**: 支持2-4个基因集合的交集分析
+- **多集合支持**: 支持2-4个基因集合的交集和并集分析
 - **多种输入方式**: 支持文本框输入和文件上传（CSV/TXT格式）
 - **韦恩图可视化**: 自动生成美观的韦恩图
 - **自定义设置**: 支持自定义颜色、字体大小、图表尺寸等
@@ -34,12 +34,13 @@
 
 ```
 gene-intersection-analyzer/
-├── index.html          # 主页面
+├── index.html          # 主页面（交集+并集分析）
+├── union.html          # 并集分析专用页面
 ├── css/
 │   └── style.css       # 样式文件
 ├── js/
 │   ├── app.js          # 主应用逻辑
-│   ├── analyzer.js     # 交集分析算法
+│   ├── analyzer.js     # 交集/并集分析算法
 │   ├── venn.js         # 韦恩图绘制
 │   └── export.js       # 导出功能
 └── README.md           # 说明文档

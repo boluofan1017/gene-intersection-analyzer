@@ -136,6 +136,72 @@ const exporter = {
     },
 
     /**
+     * 下载并集CSV文件
+     */
+    downloadUnionCSV() {
+        if (!app.lastResults || !app.lastResults.union) {
+            alert('没有可导出的并集结果');
+            return;
+        }
+
+        const { union } = app.lastResults;
+
+        // 构建CSV内容
+        let csv = 'Set Name,Total Genes,Exclusive Genes,Shared Genes,Exclusive Gene List\n';
+
+        union.contributions.forEach(contribution => {
+            const name = contribution.setName.replace(/,/g, ';');
+            const exclusiveGenes = contribution.exclusiveGenes.join(';');
+            csv += `"${name}",${contribution.totalGenes},${contribution.exclusiveCount},${contribution.sharedCount},"${exclusiveGenes}"\n`;
+        });
+
+        // 添加并集汇总
+        csv += '\n\nUnion Summary\n';
+        csv += `Total Union Genes,${union.totalCount}\n`;
+        csv += `Total Sets,${union.setCount}\n`;
+        csv += '\nAll Union Genes\n';
+        csv += union.totalUnion.join('\n');
+
+        const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'union_results.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    },
+
+    /**
+     * 复制并集基因列表
+     */
+    copyUnion() {
+        if (!app.lastResults || !app.lastResults.union) {
+            alert('没有可复制的并集结果');
+            return;
+        }
+
+        const { union } = app.lastResults;
+        const text = union.totalUnion.join('\n');
+
+        navigator.clipboard.writeText(text).then(() => {
+            this.showToast(`已复制并集的 ${union.totalCount} 个基因`);
+        }).catch(() => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            this.showToast(`已复制并集的 ${union.totalCount} 个基因`);
+        });
+    },
+
+    /**
      * 显示提示消息
      * @param {string} message - 消息内容
      */

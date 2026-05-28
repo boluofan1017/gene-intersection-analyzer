@@ -274,5 +274,62 @@ const GeneAnalyzer = {
                 geneCount: set.genes.length
             }))
         };
+    },
+
+    /**
+     * 计算所有集合的并集
+     * @param {Object[]} sets - 集合数组 [{name, genes}]
+     * @returns {Object} - 并集结果
+     */
+    calculateUnion(sets) {
+        // 计算总并集
+        let totalUnion = [];
+        sets.forEach(set => {
+            totalUnion = this.union(totalUnion, set.genes);
+        });
+
+        // 计算每个集合的独有基因
+        const exclusiveGenes = this.calculateExclusiveGenes(sets);
+
+        // 计算每个集合对并集的贡献
+        const contributions = sets.map((set, index) => {
+            // 计算该集合中不在其他集合中的基因
+            const otherSets = sets.filter((_, i) => i !== index);
+            let otherUnion = [];
+            otherSets.forEach(other => {
+                otherUnion = this.union(otherUnion, other.genes);
+            });
+
+            const exclusive = this.difference(set.genes, otherUnion);
+            const shared = this.intersect(set.genes, otherUnion);
+
+            return {
+                setIndex: index,
+                setName: set.name,
+                totalGenes: set.genes.length,
+                exclusiveGenes: exclusive,
+                exclusiveCount: exclusive.length,
+                sharedGenes: shared,
+                sharedCount: shared.length
+            };
+        });
+
+        return {
+            totalUnion: totalUnion,
+            totalCount: totalUnion.length,
+            setCount: sets.length,
+            contributions: contributions,
+            exclusiveGenes: exclusiveGenes
+        };
+    },
+
+    /**
+     * 生成并集韦恩图数据
+     * @param {Object[]} sets - 集合数组
+     * @returns {Object[]} - venn.js 格式的数据
+     */
+    generateUnionVennData(sets) {
+        // 并集韦恩图数据与交集相同，但大小表示并集
+        return this.generateVennData(sets);
     }
 };

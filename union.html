@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gene Intersection Analyzer - 基因交集分析工具</title>
+    <title>Gene Union Analyzer - 基因并集分析工具</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <!-- 头部 -->
         <header class="header">
-            <h1>Gene Intersection & Union Analyzer</h1>
-            <p class="subtitle">基因交集与并集分析工具 - 支持2-4个基因集合的交集/并集分析与韦恩图可视化</p>
+            <h1>Gene Union Analyzer</h1>
+            <p class="subtitle">基因并集分析工具 - 支持2-4个基因集合的并集分析与韦恩图可视化</p>
+            <a href="index.html" class="back-link">← 返回交集分析</a>
         </header>
 
         <!-- 输入区域 -->
@@ -98,8 +99,7 @@
             </div>
 
             <div class="action-buttons">
-                <button class="analyze-btn" onclick="app.analyze()">🔍 取交集分析</button>
-                <button class="union-btn" onclick="app.analyzeUnion()">🔗 取并集分析</button>
+                <button class="union-btn" onclick="app.analyzeUnion()">🔗 开始并集分析</button>
                 <button class="clear-btn" onclick="app.clearAll()">🗑️ 清空所有</button>
             </div>
         </section>
@@ -136,7 +136,7 @@
 
         <!-- 结果区域 -->
         <section class="results-section" id="resultsSection" style="display: none;">
-            <h2>分析结果</h2>
+            <h2>并集分析结果</h2>
 
             <!-- 韦恩图 -->
             <div class="venn-container">
@@ -147,29 +147,8 @@
                 </div>
             </div>
 
-            <!-- 交集结果表格 -->
-            <div class="intersection-table-container" id="intersectionContainer">
-                <h3>交集详情</h3>
-                <div class="table-actions">
-                    <button onclick="exporter.downloadCSV()">📥 下载 CSV</button>
-                    <button onclick="exporter.copyAllIntersections()">📋 复制所有交集</button>
-                </div>
-                <table id="intersectionTable">
-                    <thead>
-                        <tr>
-                            <th>交集区域</th>
-                            <th>基因数量</th>
-                            <th>基因列表</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="intersectionBody">
-                    </tbody>
-                </table>
-            </div>
-
             <!-- 并集结果区域 -->
-            <div class="union-table-container" id="unionContainer" style="display: none;">
+            <div class="union-table-container" id="unionContainer">
                 <h3>并集详情</h3>
                 <div class="union-summary">
                     <div class="summary-card">
@@ -207,7 +186,7 @@
 
         <!-- 页脚 -->
         <footer class="footer">
-            <p>Gene Intersection Analyzer v1.0 | 支持部署到 GitHub Pages</p>
+            <p>Gene Intersection & Union Analyzer v1.0 | 支持部署到 GitHub Pages</p>
         </footer>
     </div>
 

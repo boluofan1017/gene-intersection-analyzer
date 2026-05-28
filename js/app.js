@@ -191,8 +191,54 @@ const app = {
         // 渲染韦恩图
         VennRenderer.render('vennDiagram', sets, options);
 
+        // 显示交集结果，隐藏并集结果
+        document.getElementById('intersectionContainer').style.display = 'block';
+        document.getElementById('unionContainer').style.display = 'none';
+
         // 显示结果表格
         this.renderIntersectionTable(intersections);
+
+        // 显示结果区域
+        document.getElementById('resultsSection').style.display = 'block';
+
+        // 滚动到结果区域
+        document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+    },
+
+    /**
+     * 执行并集分析
+     */
+    analyzeUnion() {
+        // 收集输入数据
+        const sets = this.collectInputData();
+
+        if (sets.length < 2) {
+            alert('请至少输入两个包含基因的集合');
+            return;
+        }
+
+        // 计算并集
+        const unionResult = GeneAnalyzer.calculateUnion(sets);
+
+        // 保存结果
+        this.lastResults = {
+            sets: sets,
+            union: unionResult,
+            isUnion: true
+        };
+
+        // 获取图表设置
+        const options = this.getChartOptions();
+
+        // 渲染韦恩图
+        VennRenderer.render('vennDiagram', sets, options);
+
+        // 隐藏交集结果，显示并集结果
+        document.getElementById('intersectionContainer').style.display = 'none';
+        document.getElementById('unionContainer').style.display = 'block';
+
+        // 显示并集结果表格
+        this.renderUnionTable(unionResult);
 
         // 显示结果区域
         document.getElementById('resultsSection').style.display = 'block';
@@ -275,6 +321,85 @@ const app = {
             tr.appendChild(tdAction);
 
             tbody.appendChild(tr);
+        });
+    },
+
+    /**
+     * 渲染并集结果表格
+     * @param {Object} unionResult - 并集结果
+     */
+    renderUnionTable(unionResult) {
+        // 更新摘要信息
+        document.getElementById('unionTotalCount').textContent = unionResult.totalCount;
+        document.getElementById('unionSetCount').textContent = unionResult.setCount;
+
+        // 渲染表格
+        const tbody = document.getElementById('unionBody');
+        tbody.innerHTML = '';
+
+        unionResult.contributions.forEach((contribution, index) => {
+            const tr = document.createElement('tr');
+
+            // 集合名称列
+            const tdName = document.createElement('td');
+            tdName.innerHTML = `<strong>${contribution.setName}</strong>`;
+            tr.appendChild(tdName);
+
+            // 基因数量列
+            const tdCount = document.createElement('td');
+            tdCount.innerHTML = `总数: ${contribution.totalGenes}<br>独有: ${contribution.exclusiveCount}<br>共有: ${contribution.sharedCount}`;
+            tr.appendChild(tdCount);
+
+            // 独有基因列
+            const tdGenes = document.createElement('td');
+            const genesDiv = document.createElement('div');
+            genesDiv.className = 'gene-tags';
+
+            const displayGenes = contribution.exclusiveGenes.length > 15
+                ? contribution.exclusiveGenes.slice(0, 15)
+                : contribution.exclusiveGenes;
+
+            displayGenes.forEach(gene => {
+                const span = document.createElement('span');
+                span.className = 'gene-tag';
+                span.textContent = gene;
+                genesDiv.appendChild(span);
+            });
+
+            if (contribution.exclusiveGenes.length > 15) {
+                const moreSpan = document.createElement('span');
+                moreSpan.className = 'gene-tag';
+                moreSpan.textContent = `... +${contribution.exclusiveGenes.length - 15}`;
+                moreSpan.style.fontStyle = 'italic';
+                genesDiv.appendChild(moreSpan);
+            }
+
+            tdGenes.appendChild(genesDiv);
+            tr.appendChild(tdGenes);
+
+            // 操作列
+            const tdAction = document.createElement('td');
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.textContent = '复制独有基因';
+            copyBtn.onclick = function() {
+                exporter.copyIntersection(contribution.exclusiveGenes, `${contribution.setName} 独有基因`);
+            };
+            tdAction.appendChild(copyBtn);
+            tr.appendChild(tdAction);
+
+            tbody.appendChild(tr);
+        });
+
+        // 渲染完整并集基因列表
+        const unionGenesList = document.getElementById('unionGenesList');
+        unionGenesList.innerHTML = '';
+
+        unionResult.totalUnion.forEach(gene => {
+            const span = document.createElement('span');
+            span.className = 'gene-tag';
+            span.textContent = gene;
+            unionGenesList.appendChild(span);
         });
     },
 
